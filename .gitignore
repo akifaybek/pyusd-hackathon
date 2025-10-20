@@ -1,20 +1,26 @@
-# Node modules
-/node_modules
+# Node.js Bağımlılıkları (Tüm projeler için)
+/node_modules/              # Ana dizindeki node_modules (backend)
+/frontend/node_modules/      # Frontend'in node_modules'ü
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
-# Compilation output
-/dist
+# VSCode Ayarları
+.vscode/
 
-# pnpm deploy output
-/bundle
+# Hardhat Geçici Dosyaları (Backend)
+cache/
+artifacts/
+coverage/
+coverage.json
+typechain-types/
 
-# Hardhat Build Artifacts
-/artifacts
+# Frontend (Vite) Derleme ve Ortam Dosyaları
+/frontend/dist/
+/frontend/.env.local
+/frontend/.env.*.local
+/frontend/coverage/          # Frontend test coverage (varsa)
 
-# Hardhat compilation (v2) support directory
-/cache
-
-# Typechain output
-/types
-
-# Hardhat coverage reports
-/coverage
+# İşletim Sistemi Dosyaları
+.DS_Store
+Thumbs.db
