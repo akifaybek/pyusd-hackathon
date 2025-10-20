@@ -1,7 +1,7 @@
 import type { HardhatUserConfig } from "hardhat/config";
-
 import hardhatToolboxViemPlugin from "@nomicfoundation/hardhat-toolbox-viem";
 import { configVariable } from "hardhat/config";
+import path from "path"; // <-- Gerekli import
 
 const config: HardhatUserConfig = {
   plugins: [hardhatToolboxViemPlugin],
@@ -37,6 +37,16 @@ const config: HardhatUserConfig = {
       accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
     },
   },
+
+  // --- BU KISIM EKLENDİ ---
+  paths: {
+    sources: "./contracts",
+    tests: "./test", // Solidity testlerinin yerini belirtir
+    cache: "./cache",
+    artifacts: "./artifacts"
+  },
+  // Hardhat'e forge-std importlarını nerede bulacağını söyle
+
 };
 
 export default config;
