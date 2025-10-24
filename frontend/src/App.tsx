@@ -1,35 +1,34 @@
-// 1. ConnectKit'ten hazır butonu import et
 import { ConnectKitButton } from "connectkit";
-
-// 2. CSS dosyasını import et (daha sonra güzelleştirmek için)
-import './App.css'; 
+import './App.css';
+import { useAccount } from "wagmi"; // 1. Cüzdan durumunu kontrol etmek için import et
+import { SubscriptionPanel } from "./components/SubscriptionPanel"; // 2. Yeni panelimizi import et
 
 function App() {
+  // 3. Cüzdan bağlı mı diye canlı olarak kontrol et
+  const { isConnected } = useAccount();
+
   return (
     <>
-      {/* GÖREV B2: Cüzdan Bağlama Arayüzü */}
       <header style={{ display: 'flex', justifyContent: 'flex-end', padding: '20px' }}>
         <ConnectKitButton />
       </header>
 
-      {/* Ana İçerik Alanı */}
       <main style={{ padding: '20px', textAlign: 'center' }}>
         <h1>PYUSD "Kullandıkça Öde" Protokolü</h1>
-        <p>
-          Hoş geldiniz! Lütfen abonelik akışını başlatmak için sağ üst köşeden cüzdanınızı bağlayın.
-        </p>
 
-        {/* Buraya daha sonra B2'nin devamı (Bakiye, Abonelik Durumu)
-          ve B3 görevindeki (Approve/Subscribe) butonlar gelecek.
-        */}
         <div style={{ marginTop: '50px' }}>
           <h2>Abonelik Kontrol Paneli</h2>
 
-          {/* GÖREV B2 (Devamı): Bakiye ve Abonelik Durumu buraya gelecek */}
+          {/* 4. SİHİRLİ KISIM:
+            Eğer cüzdan bağlıysa (isConnected == true) paneli göster,
+            değilse "Lütfen cüzdanınızı bağlayın" mesajını göster.
+          */}
+          {isConnected ? (
+            <SubscriptionPanel /> 
+          ) : (
+            <p>Abonelik durumunuzu ve PYUSD bakiyenizi görmek için lütfen cüzdanınızı bağlayın.</p>
+          )}
 
-          {/* GÖREV B3: "Approve" ve "Subscribe" butonları buraya gelecek */}
-
-          {/* GÖREV B4: "Token-Gated İçerik" buraya gelecek */}
         </div>
       </main>
     </>
