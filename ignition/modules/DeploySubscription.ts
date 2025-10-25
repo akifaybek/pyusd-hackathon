@@ -1,36 +1,31 @@
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
 
-// --- DEPLOY AYARLARI ---
-// Bu değerleri buradan kolayca değiştirebiliriz.
+// --- SEPOLIA AYARLARI ---
+const SEPOLIA_PYUSD_ADDRESS = "0x1c7d4B196CB0c7b01d743fBc6116a902379c7a08"; // Teyit ettiğimiz Sepolia PYUSD adresi
 
-// 30 gün saniye cinsinden: 30 gün * 24 saat * 60 dk * 60 sn
+// --- KONTAT AYARLARI ---
+// Bu değerler lokal ile aynı kalabilir
 const THIRTY_DAYS_IN_SECS = 30 * 24 * 60 * 60;
+const SUBSCRIPTION_FEE = 10_000_000n; // 10 PYUSD (6 decimals)
 
-// Abonelik ücreti: 10 PYUSD
-// DİKKAT: PYUSD 6 ondalık basamaklı.
-// 10 * (10 ** 6) = 10,000,000
-// 'n' harfi bu sayının BigInt olduğunu belirtir, bu yeni standarttır.
-const SUBSCRIPTION_FEE = 10_000_000n; 
-
-// --- DEPLOY MODÜLÜ ---
-
-export default buildModule("DeploySubscriptionModule", (m) => {
-  // 1. Deployer (kontratı dağıtan) cüzdanın adresini al
+// --- DEPLOY MODÜLÜ (SEPOLIA İÇİN) ---
+// Modül ID'sini Sepolia için daha açıklayıcı yapalım
+export default buildModule("SepoliaDeploySubscription", (m) => {
+  // 1. Deployer cüzdan adresini al (config'den gelen)
   const deployer = m.getAccount(0);
 
-  // 2. Önce MockPYUSD kontratını deploy et
-  // Constructor'ına 'deployer' adresini 'initialOwner' olarak veriyoruz.
-  const mockPYUSD = m.contract("MockPYUSD", [deployer]);
+  // 2. MockPYUSD DEPLOY ETME! Bu satırı kaldırıyoruz.
+  // const mockPYUSD = m.contract("MockPYUSD", [deployer]); // <-- BU SATIR SİLİNDİ
 
-  // 3. Sonra PYUSDSubscription kontratını deploy et
-  // Constructor'ına (kurucu fonksiyonuna) gereken 4 argümanı sırayla veriyoruz:
+  // 3. Sadece PYUSDSubscription kontratını deploy et
+  // Constructor'ına ilk argüman olarak Gerçek Sepolia PYUSD adresini veriyoruz:
   const subscription = m.contract("PYUSDSubscription", [
-    mockPYUSD, // 1. _pyusdAddress (Ignition, mockPYUSD deploy olunca adresi buraya kendi koyar)
-    SUBSCRIPTION_FEE, // 2. _fee
-    BigInt(THIRTY_DAYS_IN_SECS), // 3. _period
-    deployer, // 4. _initialOwner
+    SEPOLIA_PYUSD_ADDRESS,      // 1. _pyusdAddress (Mock yerine gerçek adres)
+    SUBSCRIPTION_FEE,           // 2. _fee
+    BigInt(THIRTY_DAYS_IN_SECS),// 3. _period
+    deployer,                   // 4. _initialOwner
   ]);
 
-  // 4. Test ve frontend'de kullanmak üzere bu kontratların bilgilerini döndür
-  return { mockPYUSD, subscription };
+  // 4. Sadece deploy edilen subscription kontratının bilgisini döndür
+  return { subscription }; // mockPYUSD'yi kaldırdık
 });
