@@ -129,7 +129,7 @@ contract SubscriptionTest is Test, IERC20Errors {
         assertEq(expiresAt, expectedExpiresAt, "Renewed subscription expiration time is wrong");
     }
 
-    // --- Task 9: Error Handling Tests ---
+  // --- Task 9: Error Handling Tests ---
 
     /**
      * @notice Test: `subscribe` reverts with specific message if allowance is insufficient.
@@ -138,14 +138,12 @@ contract SubscriptionTest is Test, IERC20Errors {
         vm.startPrank(user1);
         mockPYUSD.approve(address(subscription), SUBSCRIPTION_FEE - 1); // Insufficient allowance
 
-        // --- DÜZELTME BURADA: Kontrattaki Türkçe mesaja geri çevrildi ---
-        vm.expectRevert(bytes("PYUSD onayi yetersiz")); 
-        // ------------------------------------------------------------------
+        // BEKLENEN HATA: Kontrattaki yeni İngilizce mesaja UYUMLU hale getirildi
+        vm.expectRevert(bytes("Allowance insufficient")); 
         
         subscription.subscribe(); // Should fail
         vm.stopPrank();
     }
-
     /**
      * @notice Test: `subscribe` reverts with ERC20InsufficientBalance if allowance is sufficient but balance is not.
      * @dev Checks for the OpenZeppelin v5+ custom error.

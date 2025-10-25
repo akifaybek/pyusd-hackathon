@@ -6,14 +6,14 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 // Import Ownable for managing contract ownership.
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-// Note: Importing IERC20Errors is recommended for clean error handling, 
-// but is excluded here as per your request to minimize changes.
+// Note: Inheriting ERC20 error interfaces is often good practice for explicit custom errors.
 
 /**
  * @title PYUSDSubscription
  * @notice A protocol enabling token-gated subscriptions using PYUSD stablecoin.
  * @dev Implements a pull-payment model using ERC-20 approve/transferFrom.
- * Access control is based on time (expiration timestamp).
+ * Access control is based on time (expiration timestamp). This structure allows
+ * the user's funds to remain in their wallet until the moment of payment.
  */
 contract PYUSDSubscription is Ownable {
 
@@ -47,10 +47,10 @@ contract PYUSDSubscription is Ownable {
         uint256 _period,
         address _initialOwner
     ) Ownable(_initialOwner) {
-        // Input validation
-        require(_pyusdAddress != address(0), "PYUSD adresi sifir olamaz");
-        require(_fee > 0, "Ucret sifirdan buyuk olmali");
-        require(_period > 0, "Sure sifirdan buyuk olmali");
+        // Validate inputs before setting state
+        require(_pyusdAddress != address(0), "PYUSD address cannot be zero");
+        require(_fee > 0, "Fee must be greater than zero");
+        require(_period > 0, "Period must be greater than zero");
         
         // Assign immutable variables
         pyusdToken = IERC20(_pyusdAddress);
@@ -69,20 +69,22 @@ contract PYUSDSubscription is Ownable {
     function subscribe() public { 
         address user = msg.sender;
 
-        // 1. Check Allowance: Verify if the user has approved enough tokens for the fee.
+        // 1. Check Allowance: Verify the user has approved enough tokens for the fee.
         uint256 allowance = pyusdToken.allowance(user, address(this));
-        require(allowance >= subscriptionFee, "PYUSD onayi yetersiz");
+        // CRITICAL FIX: Translate revert message
+        require(allowance >= subscriptionFee, "Allowance insufficient"); 
 
-        // 2. Pull Payment: Execute the transfer from the user to this contract.
+        // 2. Pull Payment: Execute the transfer using the granted allowance.
         bool sent = pyusdToken.transferFrom(user, address(this), subscriptionFee);
-        require(sent, "PYUSD transferi basarisiz");
+        // CRITICAL FIX: Translate revert message
+        require(sent, "PYUSD transfer failed"); 
 
         // 3. Calculate Expiration: Determine the new expiration time, handling renewals.
         uint256 currentExpiration = subscriberExpiresAt[user];
         uint256 newExpiration;
 
         if (currentExpiration > block.timestamp) {
-            // Active subscription: Extend from the current expiration date.
+            // Renewal case: Extend from the current expiration date.
             newExpiration = currentExpiration + subscriptionPeriod;
         } else {
             // New or expired subscription: Start the new period from the current block time.
@@ -97,7 +99,8 @@ contract PYUSDSubscription is Ownable {
 
     /**
      * @notice Checks if a given address has a subscription that is currently active.
-     * @dev A `view` function, essential for gas-less off-chain access control checks.
+     * @dev This is a gas-less `view` function, essential for off-chain access control checks.
+     * @return bool True if the expiration time is in the future, false otherwise.
      */
     function isSubscriberActive(address _subscriber) public view returns (bool) {
         // The subscription is active if the expiration time is in the future.
