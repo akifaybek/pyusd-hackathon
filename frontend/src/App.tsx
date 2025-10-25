@@ -1,36 +1,44 @@
+import { Routes, Route, Link } from "react-router-dom"; // <-- Yönlendirme için gerekli importlar
 import { ConnectKitButton } from "connectkit";
 import './App.css';
-import { useAccount } from "wagmi"; // 1. Cüzdan durumunu kontrol etmek için import et
-import { SubscriptionPanel } from "./components/SubscriptionPanel"; // 2. Yeni panelimizi import et
+
+// 1. Oluşturduğumuz sayfaları import et
+import HomePage from "./pages/HomePage";
+import DashboardPage from "./pages/DashboardPage";
 
 function App() {
-  // 3. Cüzdan bağlı mı diye canlı olarak kontrol et
-  const { isConnected } = useAccount();
-
   return (
     <>
-      <header style={{ display: 'flex', justifyContent: 'flex-end', padding: '20px' }}>
+      {/* GENEL LAYOUT: Header (Her sayfada görünecek) */}
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 30px', backgroundColor: '#222' }}>
+        {/* Sayfalar arası geçiş linkleri */}
+        <nav>
+          <Link to="/" style={{ color: '#61dafb', marginRight: '15px', textDecoration: 'none' }}>Ana Sayfa</Link>
+          <Link to="/dashboard" style={{ color: '#61dafb', textDecoration: 'none' }}>Kontrol Paneli</Link>
+        </nav>
+        {/* Cüzdan Bağlama Butonu */}
         <ConnectKitButton />
       </header>
 
-      <main style={{ padding: '20px', textAlign: 'center' }}>
-        <h1>PYUSD "Kullandıkça Öde" Protokolü</h1>
+      {/* SAYFA İÇERİĞİ: URL'ye göre değişecek */}
+      <main>
+        {/* Routes bileşeni, URL'ye göre hangi Route'un aktif olacağını belirler */}
+        <Routes>
+          {/* Eğer URL '/' ise HomePage bileşenini göster */}
+          <Route path="/" element={<HomePage />} />
 
-        <div style={{ marginTop: '50px' }}>
-          <h2>Abonelik Kontrol Paneli</h2>
+          {/* Eğer URL '/dashboard' ise DashboardPage bileşenini göster */}
+          <Route path="/dashboard" element={<DashboardPage />} />
 
-          {/* 4. SİHİRLİ KISIM:
-            Eğer cüzdan bağlıysa (isConnected == true) paneli göster,
-            değilse "Lütfen cüzdanınızı bağlayın" mesajını göster.
-          */}
-          {isConnected ? (
-            <SubscriptionPanel /> 
-          ) : (
-            <p>Abonelik durumunuzu ve PYUSD bakiyenizi görmek için lütfen cüzdanınızı bağlayın.</p>
-          )}
-
-        </div>
+          {/* İsteğe Bağlı: Eşleşmeyen URL'ler için 404 sayfası eklenebilir */}
+          {/* <Route path="*" element={<div>Sayfa Bulunamadı (404)</div>} /> */}
+        </Routes>
       </main>
+
+      {/* İsteğe Bağlı: Footer (Her sayfada görünecek) */}
+      {/* <footer style={{ textAlign: 'center', marginTop: '50px', padding: '20px', color: '#888' }}>
+        © 2025 PYUSD Hackathon Projesi
+      </footer> */}
     </>
   )
 }

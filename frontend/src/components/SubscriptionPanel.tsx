@@ -1,7 +1,7 @@
-import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi"; // <-- Gerekli tüm wagmi hook'ları
-import { formatUnits, parseUnits } from "viem"; // <-- parseUnits eklendi (kullanmasak da import edelim)
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { formatUnits, parseUnits } from "viem";
 
-// 1. GERÇEK ABI ve (Kısmen Gerçek/Logdan Alınan) Adreslerimizi import et
+// GERÇEK ABI ve (Kısmen Gerçek/Logdan Alınan) Adreslerimizi import et
 import { 
   SUBSCRIPTION_ABI, 
   SUBSCRIPTION_CONTRACT_ADDRESS, 
@@ -14,8 +14,6 @@ export function SubscriptionPanel() {
   const { address: userAddress, isConnected } = useAccount();
 
   // --- 2. KONTRATLARDAN OKUMA (READ HOOKS) ---
-
-  // A. Kullanıcı aktif abone mi?
   const { data: isActive, isLoading: isLoadingStatus, error: errorStatus, refetch: refetchIsActive } = useReadContract({
     address: SUBSCRIPTION_CONTRACT_ADDRESS,
     abi: SUBSCRIPTION_ABI,
@@ -24,7 +22,6 @@ export function SubscriptionPanel() {
     query: { enabled: isConnected }
   });
 
-  // B. Kullanıcının PYUSD Bakiyesi
   const { data: pyusdBalance, isLoading: isLoadingBalance, error: errorBalance } = useReadContract({
     address: PYUSD_TOKEN_ADDRESS, 
     abi: PYUSD_ABI,
@@ -33,7 +30,6 @@ export function SubscriptionPanel() {
     query: { enabled: isConnected }
   });
 
-  // C. Abonelik ücreti ne kadar? (YENİ EKLENDİ)
   const { data: fee, isLoading: isLoadingFee, error: errorFee } = useReadContract({
     address: SUBSCRIPTION_CONTRACT_ADDRESS,
     abi: SUBSCRIPTION_ABI,
@@ -41,113 +37,95 @@ export function SubscriptionPanel() {
     query: { enabled: isConnected }
   });
 
-  // D. Kullanıcı ne kadar onay (allowance) vermiş? (YENİ EKLENDİ)
   const { data: allowance, isLoading: isLoadingAllowance, error: errorAllowance, refetch: refetchAllowance } = useReadContract({
     address: PYUSD_TOKEN_ADDRESS,
     abi: PYUSD_ABI,
     functionName: "allowance",
     args: [userAddress!, SUBSCRIPTION_CONTRACT_ADDRESS],
-    query: { enabled: isConnected && fee !== undefined } // Sadece cüzdan bağlıysa ve ücreti biliyorsak çalıştır
+    query: { enabled: isConnected && fee !== undefined } 
   });
 
-  // --- 3. KONTRATLARA YAZMA (WRITE HOOKS) --- (YENİ EKLENDİ)
-
-  // Approve işlemi için hazırlık
+  // --- 3. KONTRATLARA YAZMA (WRITE HOOKS) ---
   const { data: approveHash, isPending: isApprovePending, writeContract: approve } = useWriteContract();
-
-  // Subscribe işlemi için hazırlık
   const { data: subscribeHash, isPending: isSubscribePending, writeContract: subscribe } = useWriteContract();
 
-  // --- 4. İŞLEM ONAYI İZLEME (RECEIPT HOOKS) --- (YENİ EKLENDİ)
-
-  // Approve işleminin onaylanmasını izle
+  // --- 4. İŞLEM ONAYI İZLEME (RECEIPT HOOKS) ---
   const { isLoading: isApproveConfirming } = useWaitForTransactionReceipt({ 
     hash: approveHash, 
     onSuccess: (data) => { 
         console.log("Approve işlemi onaylandı:", data);
-        refetchAllowance(); // Onay miktarını hemen güncelle
+        refetchAllowance(); 
     }
   });
-
-  // Subscribe işleminin onaylanmasını izle
+  
   const { isLoading: isSubscribeConfirming } = useWaitForTransactionReceipt({ 
     hash: subscribeHash, 
     onSuccess: (data) => { 
         console.log("Subscribe işlemi onaylandı:", data);
-        refetchIsActive(); // Abonelik durumunu hemen güncelle
+        refetchIsActive(); 
     }
   });
 
-  // --- 5. BUTON TIKLAMA FONKSİYONLARI --- (YENİ EKLENDİ)
-
+  // --- 5. BUTON TIKLAMA FONKSİYONLARI ---
   const handleApprove = () => {
-    if (!fee) return; // Ücret belli değilse yapma
-    approve({ // wagmi'nin approve fonksiyonunu çağır
+    if (!fee) return;
+    approve({
       address: PYUSD_TOKEN_ADDRESS,
       abi: PYUSD_ABI,
       functionName: "approve",
-      args: [SUBSCRIPTION_CONTRACT_ADDRESS, fee] // Kime, Ne kadar
+      args: [SUBSCRIPTION_CONTRACT_ADDRESS, fee] 
     });
   };
 
   const handleSubscribe = () => {
-    subscribe({ // wagmi'nin subscribe fonksiyonunu çağır
+    subscribe({
       address: SUBSCRIPTION_CONTRACT_ADDRESS,
       abi: SUBSCRIPTION_ABI,
       functionName: "subscribe",
-      args: [] // Argümanı yok
+      args: [] 
     });
   };
 
-
   // --- 6. ARAYÜZ (JSX) ---
-
-  // Cüzdan bağlı değilse bir şey gösterme
-  if (!isConnected) {
-    return null; 
-  }
-
-  // Herhangi bir veri yükleniyorsa...
+  if (!isConnected) { return null; }
   if (isLoadingStatus || isLoadingBalance || isLoadingFee || isLoadingAllowance) {
     return <p>Kullanıcı verileri Sepolia ağından yükleniyor...</p>;
   }
 
-  // Herhangi bir okuma hatası olduysa (adres yanlışsa vs.)
-  // Not: fee ve allowance undefined ise de hata kabul ediyoruz
   const hasReadError = errorStatus || errorBalance || errorFee || errorAllowance || fee === undefined || allowance === undefined;
   if (hasReadError) { 
     console.error("Kontrat okuma hatası:", errorStatus, errorBalance, errorFee, errorAllowance);
+    // Hata div'ine className ekle:
     return (
-        <div style={{ border: '1px solid red', padding: '10px', borderRadius: '8px', color: 'red' }}>
+        <div className="error-panel"> 
             <h4>Hata!</h4>
             <p>Kontrat verileri okunamadı. Adresler yanlış olabilir veya Sepolia ağında bir sorun olabilir.</p>
             <p>Lütfen cüzdanınızın Sepolia ağında olduğundan emin olun.</p>
         </div>
     );
   }
-
+  
   // --- BURADAN SONRASI VERİLER BAŞARIYLA OKUNDU DEMEK ---
-
-  // Onay yeterli mi? (fee ve allowance artık undefined olamaz)
   const hasApprovedEnough = allowance >= fee;
 
-  // Görev B4: Eğer kullanıcı zaten aktifse, sadece tebrik mesajı göster
+  // Görev B4: Eğer kullanıcı zaten aktifse, stilleri güncellenmiş mesajı göster
   if (isActive) {
+    // Aktif durum div'ine className ve style ekle:
     return (
-      <div style={{ border: '1px solid green', padding: '20px', borderRadius: '8px', color: 'green' }}>
-        <h3>TEBRİKLER! ABONELİĞİNİZ AKTİF.</h3>
-        <p>Token-Gated (Abonelik Korumalı) İçerik Açıldı!</p>
+      <div className="subscription-panel" style={{ borderColor: 'green', backgroundColor: '#1a4d1a'}}>
+        <h3 style={{color: '#90ee90'}}>TEBRİKLER! ABONELİĞİNİZ AKTİF.</h3>
+        <p style={{color: '#c0f0c0'}}>Token-Gated (Abonelik Korumalı) İçerik Açıldı!</p>
       </div>
     );
   }
 
-  // Aktif değilse, onay ve abonelik adımlarını göster
+  // Aktif değilse, onay ve abonelik adımlarını gösteren paneli className ile göster
   return (
-    <div style={{ border: '1px solid #333', padding: '20px', borderRadius: '8px' }}>
+    <div className="subscription-panel"> 
       <h4>Panel</h4>
-
+      
       <p>Abonelik Durumu: <strong style={{ color: 'red' }}>AKTİF DEĞİL</strong></p>
-
+      
       <p>
         Cüzdandaki (Mock)PYUSD Bakiyesi: 
         <strong>
@@ -155,12 +133,12 @@ export function SubscriptionPanel() {
         </strong>
       </p>
 
-      <hr style={{ margin: '20px 0' }} /> 
+      <hr /> 
 
       <h3>Abonelik Adımları</h3>
 
       <p>Abonelik Ücreti: <strong>{formatUnits(fee, 6)} PYUSD</strong></p>
-
+      
       <p>Verilen Onay: <strong>{formatUnits(allowance, 6)} PYUSD</strong></p>
 
       {/* Adım 1: Approve Butonu */}
@@ -177,7 +155,7 @@ export function SubscriptionPanel() {
       <button 
         onClick={handleSubscribe}
         disabled={!hasApprovedEnough || isSubscribePending || isSubscribeConfirming}
-        style={{ marginLeft: '10px' }}
+        style={{ marginLeft: '10px' }} // Butonlar arası boşluk için stil
       >
         {isSubscribePending ? "Cüzdanda İmza Bekleniyor..." :
          isSubscribeConfirming ? "İşlem Onaylanıyor..." :

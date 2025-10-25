@@ -1,42 +1,151 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+/* Genel Sayfa Ayarları */
+body { /* Bu kural index.css'te de olabilir, çakışırsa index.css'tekini silin */
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #1a1a1a; /* Koyu arka plan */
+  color: #f0f0f0; /* Açık renk yazı */
+  min-height: 100vh; /* Sayfanın en az ekran yüksekliğinde olmasını sağla */
+}
+
+/* Ana İçerik Alanı (Her sayfa için) */
+main {
+  max-width: 900px; /* İçeriğin genişliğini sınırla */
+  margin: 40px auto; /* Üst/Alt boşluk ve otomatik ortalama */
+  padding: 20px;
+}
+
+/* Başlık (Header) Stilleri */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: #222;
+  border-bottom: 1px solid #444; /* Başlığın altına ince çizgi */
+}
+
+header nav a { /* Header içindeki linkler */
+  color: #61dafb; /* React mavisi */
+  margin-right: 20px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+header nav a:hover {
+  color: #ffffff; /* Üzerine gelince beyaz */
+}
+
+/* Genel Başlık Stilleri (H1, H2) */
+h1 {
+  color: #61dafb;
+  margin-bottom: 30px;
+  text-align: center; /* Sayfa başlıkları ortalı olsun */
+}
+
+h2 {
+  margin-top: 50px;
+  margin-bottom: 20px;
+  color: #cccccc;
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* Paragraf Stili */
+p {
+  line-height: 1.6;
+  color: #d0d0d0;
+  text-align: center; /* Paragrafları da ortalayalım (isteğe bağlı) */
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Genel Buton Stilleri */
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s;
+  margin: 5px;
+  background-color: #61dafb; /* Ana renk */
+  color: #1a1a1a; /* Koyu yazı */
+  font-weight: bold;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+button:hover:not(:disabled) { /* Üzerine gelince (ama pasif değilse) */
+  background-color: #88ecff;
 }
 
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
+button:disabled {
+  background-color: #444; /* Pasif buton rengi */
   color: #888;
+  cursor: not-allowed;
+}
+
+/* ConnectKit Butonu (Genellikle kendi stilini getirir ama üzerine yazabiliriz) */
+/* Özel stil gerekirse buraya eklenir */
+
+
+/* SubscriptionPanel ve Hata Paneli için Class'lar */
+.panel-container { /* Panelleri ortalamak için bir dış sarmalayıcı */
+    max-width: 550px;
+    margin: 30px auto; /* Panelin üst/alt boşluğu ve ortalanması */
+}
+
+.subscription-panel {
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+  padding: 25px;
+  border-radius: 8px;
+  text-align: left; /* Panel içeriği sola dayalı */
+}
+
+.subscription-panel h4 { /* Panel içindeki başlık */
+    margin-top: 0;
+    text-align: center;
+    color: #e0e0e0;
+    margin-bottom: 25px;
+    font-size: 1.2em;
+}
+
+.subscription-panel p {
+    margin-bottom: 15px;
+    color: #c0c0c0;
+    text-align: left; /* Paneldeki paragraflar sola dayalı */
+}
+
+.subscription-panel hr {
+    border-color: #444;
+    margin: 25px 0;
+}
+
+.subscription-panel h3 { /* "Abonelik Adımları" başlığı */
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #d0d0d0;
+}
+
+.error-panel {
+  background-color: #4d1a1a;
+  border: 1px solid #a83232;
+  padding: 15px;
+  border-radius: 8px;
+  color: #ffcccc;
+  text-align: left;
+}
+
+.error-panel h4 {
+    margin-top: 0;
+    text-align: center;
+    color: #ff9999;
+    margin-bottom: 10px;
+}
+
+.error-panel p {
+    color: #ffdddd;
+    text-align: left;
 }
