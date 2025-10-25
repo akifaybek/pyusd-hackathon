@@ -1,16 +1,21 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "lib": ["ES2022"],
-    "strict": true,
-    "sourceMap": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "types": ["@nomicfoundation/hardhat-toolbox-viem/types", "node"],
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "target": "ES2022",                // Modern JavaScript hedefi
+    "module": "NodeNext",              // 'package.json' type: "module" ile uyumlu
+    "moduleResolution": "NodeNext",    // Modern modül çözümleme
+    "lib": ["ES2022"],                  // Modern JavaScript kütüphaneleri
+    "strict": true,                    // Sıkı tip kontrolü (önerilir)
+    "sourceMap": true,                 // Hata ayıklama için kaynak haritaları
+    "resolveJsonModule": true,         // JSON dosyalarını import etmeye izin ver
+    "esModuleInterop": true,           // CommonJS ve ES Modülleri arası uyum
+    // Hardhat ve Node tiplerini belirt (Doğruydu, kalıyor)
+    "types": ["@nomicfoundation/hardhat-toolbox-viem/types", "node"], 
+    "skipLibCheck": true,              // Kütüphane tiplerini kontrol etmeyi atla (hızlandırır)
+    "forceConsistentCasingInFileNames": true, // Dosya adı büyük/küçük harf tutarlılığı
+    "outDir": "dist"                   // Derlenmiş JS dosyalarının çıkacağı yer (eklendi)
   },
-  "include": ["./test", "./ignition"]
+  // TypeScript'in hangi dosyaları dahil edeceğini belirt (güncellendi)
+  "include": ["./scripts", "./test", "./ignition", "./hardhat.config.ts"], 
+  // TypeScript'in hangi dosyaları hariç tutacağını belirt (eklendi)
+  "exclude": ["node_modules", "dist", "cache", "artifacts"] 
 }
