@@ -1,3 +1,4 @@
 {
-  "SepoliaDeploySubscription#PYUSDSubscription": "0xf939bd2b4FB9049c5085287401b4C700C278512E"
+  "MockPYUSDModule#MockPYUSD": "0xCA0d1c98DA8360466b6193194A28CE5DE9Eb4B71",
+  "SepoliaDeploySubscription#PYUSDSubscription": "0x1E2Cb1cEBD00485D02461EeB532AFb19F50898E0"
 }

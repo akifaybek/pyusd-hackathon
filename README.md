@@ -33,9 +33,9 @@ Our protocol follows a simple flow on the **Sepolia Testnet**:
 
 1.  **Connect Wallet:** The user connects their Web3 wallet (e.g., MetaMask) configured for the Sepolia testnet to our frontend application.
 2.  **Check Status:** The application reads the user's current subscription status (`isSubscriberActive` from our contract) and their Sepolia PYUSD balance (`balanceOf` from the official PYUSD contract).
-3.  **Grant Approval (`approve`):** Before the first subscription, the user interacts with the **official Sepolia PYUSD token contract** (`0x1c7D...`) to grant permission (`approve`) for our subscription contract (`0xf939...`) to spend the required subscription fee (e.g., 10 PYUSD) on their behalf. This is a standard ERC20 security step.
-4.  **Subscribe (`subscribe`):** The user clicks the "Subscribe" button on the frontend. This calls the `subscribe()` function on **our deployed `PYUSDSubscription` contract** (`0xf939...`). The contract verifies the approval, pulls the fee using `transferFrom` from the user's wallet to the contract, and activates the subscription by setting an `expiresAt` timestamp. A `SubscriptionUpdated` event is emitted.
-5.  **Access Control:** The frontend (or a backend service) checks if the user's subscription is valid by calling the gas-less `isSubscriberActive(userAddress)` view function on our contract (`0xf939...`) whenever the user attempts to access protected content. Access is granted only if the current time is before the user's `expiresAt` timestamp.
+3.  **Grant Approval (`approve`):** Before the first subscription, the user interacts with the **official Sepolia PYUSD token contract** (`0x1c7d...`) to grant permission (`approve`) for our subscription contract (`0xEAce...`) to spend the required subscription fee (e.g., 10 PYUSD) on their behalf. This is a standard ERC20 security step.
+4.  **Subscribe (`subscribe`):** The user clicks the "Subscribe" button on the frontend. This calls the `subscribe()` function on **our deployed `PYUSDSubscription` contract** (`0xEAce...`). The contract verifies the approval, pulls the fee using `transferFrom` from the user's wallet to the contract, and activates the subscription by setting an `expiresAt` timestamp. A `SubscriptionUpdated` event is emitted.
+5.  **Access Control:** The frontend (or a backend service) checks if the user's subscription is valid by calling the gas-less `isSubscriberActive(userAddress)` view function on our contract (`0xEAce...`) whenever the user attempts to access protected content. Access is granted only if the current time is before the user's `expiresAt` timestamp.
 6.  **Renewal:** If a user calls `subscribe()` again while their subscription is still active, the new subscription period is added on top of their remaining time. If their subscription has expired, a new period starts from the current time.
 
 ---
@@ -59,10 +59,10 @@ Our protocol follows a simple flow on the **Sepolia Testnet**:
 
 ## 📍 Deployed Contract & Token (Sepolia)
 
-* **PYUSDSubscription Contract:** [`0xf939bd2b4FB9049c5085287401b4C700C278512E`](https://sepolia.etherscan.io/address/0xf939bd2b4FB9049c5085287401b4C700C278512E)
-    * Verified on Blockscout: [`https://eth-sepolia.blockscout.com/address/0xf939bd2b4FB9049c5085287401b4C700C278512E#code`](https://eth-sepolia.blockscout.com/address/0xf939bd2b4FB9049c5085287401b4C700C278512E#code)
+* **PYUSDSubscription Contract:** [`0x1E2Cb1cEBD00485D02461EeB532AFb19F50898E0`](https://sepolia.etherscan.io/address/0x1E2Cb1cEBD00485D02461EeB532AFb19F50898E0)
+    * Verified on Blockscout: [`https://eth-sepolia.blockscout.com/address/0x1E2Cb1cEBD00485D02461EeB532AFb19F50898E0#code`](https://eth-sepolia.blockscout.com/address/0x1E2Cb1cEBD00485D02461EeB532AFb19F50898E0#code)
     * *(Verification on Etherscan pending due to API key issue)*
-* **Official Sepolia PYUSD Token:** [`0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7a08`](https://sepolia.etherscan.io/token/0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7a08)
+* **MockPYUSD Token (for testing):** [`0xCA0d1c98DA8360466b6193194A28CE5DE9Eb4B71`](https://sepolia.etherscan.io/token/0xCA0d1c98DA8360466b6193194A28CE5DE9Eb4B71)
 
 ---
 
@@ -106,8 +106,8 @@ Our protocol follows a simple flow on the **Sepolia Testnet**:
 6.  Ensure your MetaMask wallet is connected to the **Sepolia** network.
 7.  Connect your wallet using the button on the Dapp.
 8.  Follow the steps on the Dashboard:
-    * **Approve:** Grant permission to our contract (`0xf939...`) to spend PYUSD from the official PYUSD contract (`0x1c7D...`).
-    * **Subscribe:** Call the `subscribe()` function on our contract (`0xf939...`).
+    * **Approve:** Grant permission to our contract (`0xEAce...`) to spend PYUSD from the official PYUSD contract (`0x1c7d...`).
+    * **Subscribe:** Call the `subscribe()` function on our contract (`0xEAce...`).
 
 ---
 

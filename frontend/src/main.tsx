@@ -3,24 +3,20 @@ import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 
-// --- GEREKLİ KÜTÜPHANELERİ İÇERİ AKTARMA ---
-
-// 1. Wagmi (Viem üzerine kurulu)
-import { WagmiProvider, createConfig, http } from 'wagmi'
-import { sepolia } from 'wagmi/chains' // Akif'in testnet'i (Sepolia)
-
-// 2. ConnectKit (Güzel "Cüzdan Bağla" butonu)
+// Wagmi'den gerekli her şeyi tek bir yerden alıyoruz
+import { WagmiProvider, createConfig, http } from 'wagmi' 
+import { sepolia } from 'wagmi/chains' 
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
-
-// 3. React-Query (Wagmi'nin "beyni", dünkü hatayı önler)
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-// 4. React Router (Sayfa Yönlendirme) --- YENİ EKLENDİ ---
 import { BrowserRouter } from "react-router-dom";
+import { Toaster } from 'react-hot-toast'; // YENİ: Toast için gerekli
 
-// --- KURULUM BAŞLANGIÇ ---
+// --- KRİTİK: RPC VE AYARLAR ---
 
-// 1. React-Query için bir "client" (istemci) oluştur
+// Sepolia RPC URL'i - Birden fazla RPC deniyoruz
+const SEPOLIA_RPC_URL = "https://ethereum-sepolia-rpc.publicnode.com"; 
+
+// 1. React-Query client
 const queryClient = new QueryClient();
 
 // 2. Wagmi/ConnectKit konfigürasyonunu (ayarını) oluştur
@@ -28,30 +24,29 @@ const config = createConfig(
   getDefaultConfig({
     appName: "PYUSD Stream Protocol (Hackathon)", 
     chains: [sepolia], 
-    walletConnectProjectId: "a8024e8262cb4e710294470773f83d33", // Demo ID
+    walletConnectProjectId: "57ed83f47f1c5a69967080cad44a6279", 
+    
+    // Wagmi v2'de transports yapısı
     transports: {
-      [sepolia.id]: http()
+      [sepolia.id]: http(SEPOLIA_RPC_URL)
     },
   }),
 );
 
-// --- UYGULAMAYI SARMALAMA (ÇOK ÖNEMLİ) ---
-// Projemizin her yerinden bu kütüphanelere erişebilmek için
-// <App /> bileşenimizi doğru sırayla "sarmalıyoruz".
+// --- UYGULAMAYI SARMALAMA ---
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  // Adım 1 (En Dış): Sayfa Yönlendirici --- YENİ EKLENDİ ---
+  // BrowserRouter'ı ekliyoruz
   <BrowserRouter> 
-    {/* Adım 2: React Query (Beyin) */}
     <QueryClientProvider client={queryClient}>
-      {/* Adım 3: Wagmi (Mantık) */}
       <WagmiProvider config={config}>
-        {/* Adım 4: ConnectKit (Butonlar/Arayüz) */}
         <ConnectKitProvider>
+          {/* React.StrictMode'u dışa taşıyarak Toast'ı da sarmalayabiliriz */}
           <React.StrictMode>
-            <App /> {/* App bileşeni artık sayfa yönlendirmesini yönetecek */}
+            <App /> 
           </React.StrictMode>
         </ConnectKitProvider>
       </WagmiProvider>
     </QueryClientProvider>
-  </BrowserRouter>, // --- KAPATMA ETİKETİ EKLENDİ ---
+    <Toaster /> {/* UYGULAMA DIŞINA EKLENEN TOASTER */}
+  </BrowserRouter>,
 )

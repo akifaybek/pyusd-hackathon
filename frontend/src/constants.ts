@@ -1,18 +1,11 @@
-/* * BU DOSYA, FRONTEND'İN BACKEND İLE KONUŞMASINI SAĞLAYAN
- * "TELEFON REHBERİ"MİZDİR.
- * SON BİLGİLERE GÖRE GÜNCELLENDİ!
- * (MockPYUSD adresinin doğruluğu teyit edilmedi, logdan alındı)
- */
+// Contract addresses on Sepolia
+export const SUBSCRIPTION_CONTRACT_ADDRESS = "0x1E2Cb1cEBD00485D02461EeB532AFb19F50898E0";
+export const PYUSD_TOKEN_ADDRESS = "0x3eC192dF723833621108F6769A32B4E0a18AB0A8"; // MockPYUSD (ESKİ - Subscription contract bunu kullanıyor)
 
-// 1. Abonelik Kontratının Adresi (GERÇEK - Akif'in SON mesajından)
-export const SUBSCRIPTION_CONTRACT_ADDRESS = "0xf939bd2b4FB9049c5085287401b4C700C278512E"; 
+// PYUSD token decimals
+export const PYUSD_DECIMALS = 6;
 
-// 2. (Mock)PYUSD Token Adresi (Logdan - Teyit Bekliyor!)
-export const PYUSD_TOKEN_ADDRESS = "0xB022BA914326A1BEA5FAf09c4C3D5b14b8d3DbC2";
-
-// --- GERÇEK ABI'LAR ---
-
-// 3. Abonelik Kontratının ABI'ı (PYUSDSubscription.json'dan)
+// PYUSDSubscription Contract ABI
 export const SUBSCRIPTION_ABI = [
   {
     "inputs": [
@@ -217,118 +210,11 @@ export const SUBSCRIPTION_ABI = [
     "stateMutability": "nonpayable",
     "type": "function"
   }
-] as const; 
+] as const;
 
-// 4. (Mock)PYUSD Token Kontratının ABI'ı (MockPYUSD.json'dan)
+// Standard ERC20 ABI (only the functions we need)
+// Using modern Solidity ABI format compatible with Wagmi v2
 export const PYUSD_ABI = [
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "initialOwner",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "spender",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "allowance",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "needed",
-        "type": "uint256"
-      }
-    ],
-    "name": "ERC20InsufficientAllowance",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "sender",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "balance",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "needed",
-        "type": "uint256"
-      }
-    ],
-    "name": "ERC20InsufficientBalance",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "approver",
-        "type": "address"
-      }
-    ],
-    "name": "ERC20InvalidApprover",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "receiver",
-        "type": "address"
-      }
-    ],
-    "name": "ERC20InvalidReceiver",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "sender",
-        "type": "address"
-      }
-    ],
-    "name": "ERC20InvalidSender",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "spender",
-        "type": "address"
-      }
-    ],
-    "name": "ERC20InvalidSpender",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      }
-    ],
-    "name": "OwnableInvalidOwner",
-    "type": "error"
-  },
   {
     "inputs": [
       {
@@ -337,77 +223,40 @@ export const PYUSD_ABI = [
         "type": "address"
       }
     ],
-    "name": "OwnableUnauthorizedAccount",
-    "type": "error"
+    "name": "balanceOf",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      },
-      {
-        "indexed": true,
         "internalType": "address",
         "name": "spender",
         "type": "address"
       },
       {
-        "indexed": false,
         "internalType": "uint256",
-        "name": "value",
+        "name": "amount",
         "type": "uint256"
       }
     ],
-    "name": "Approval",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
+    "name": "approve",
+    "outputs": [
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "previousOwner",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
-    "name": "OwnershipTransferred",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "from",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "value",
-        "type": "uint256"
-      }
-    ],
-    "name": "Transfer",
-    "type": "event"
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
   {
     "inputs": [
@@ -434,49 +283,6 @@ export const PYUSD_ABI = [
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "spender",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "value",
-        "type": "uint256"
-      }
-    ],
-    "name": "approve",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
-    ],
-    "name": "balanceOf",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "decimals",
     "outputs": [
@@ -486,58 +292,7 @@ export const PYUSD_ABI = [
         "type": "uint8"
       }
     ],
-    "stateMutability": "pure",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "mint",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "name",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "owner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "renounceOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -555,81 +310,15 @@ export const PYUSD_ABI = [
   },
   {
     "inputs": [],
-    "name": "totalSupply",
+    "name": "name",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "string",
         "name": "",
-        "type": "uint256"
+        "type": "string"
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "value",
-        "type": "uint256"
-      }
-    ],
-    "name": "transfer",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "from",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "value",
-        "type": "uint256"
-      }
-    ],
-    "name": "transferFrom",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "transferOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   }
 ] as const;
