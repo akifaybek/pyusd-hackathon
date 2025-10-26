@@ -1,8 +1,8 @@
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
 
 // --- SEPOLIA CONFIGURATION ---
-// The confirmed Sepolia PYUSD token address.
-const SEPOLIA_PYUSD_ADDRESS = "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7a08"; 
+// MockPYUSD token address (for testing)
+const SEPOLIA_PYUSD_ADDRESS = "0x3eC192dF723833621108F6769A32B4E0a18AB0A8"; 
 
 // --- CONTRACT CONSTANTS ---
 // Subscription duration: 30 days in seconds
